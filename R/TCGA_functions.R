@@ -1,4 +1,4 @@
-makeBins <- function(bin_size, build) {
+makeBins <- function(bin_size, build, sexchroms=F) {
   #load chromosome positions
   if (build == "HG18") {
     chromInfo <- read.delim("../ChromInfoHg18.txt", sep="", header=F)
@@ -19,24 +19,41 @@ makeBins <- function(bin_size, build) {
     
     start <- seq(1,chrom_length-bin_size, bin_size)
     end <- start+(bin_size-1)
+    #last bin with last bit of chromosome length smaller then bin size
+    start[length(start)+1] <- start[length(start)]+bin_size
+    end[length(end)+1] <- chrom_length
+    
     bins <- rbind(bins, data.frame(chr=paste("chr",i,sep=""), start=start, end=end))
   }
-  #X chromosome
-  chrom_length <- chromInfo$position[chromInfo$chromosome == paste("chr","X",sep="")]
   
-  start <- seq(1,chrom_length-bin_size, bin_size)
-  end <- start+(bin_size-1)
-  bins <- rbind(bins, data.frame(chr=paste("chr","X",sep=""), start=start, end=end))
-  
-  #Y chromosome
-  chrom_length <- chromInfo$position[chromInfo$chromosome == paste("chr","Y",sep="")]
-  
-  start <- seq(1,chrom_length-bin_size, bin_size)
-  end <- start+(bin_size-1)
-  bins <- rbind(bins, data.frame(chr=paste("chr","Y",sep=""), start=start, end=end))
+  if(sexchroms == T) {
+    
+    #X chromosome
+    chrom_length <- chromInfo$position[chromInfo$chromosome == paste("chr","X",sep="")]
+    
+    start <- seq(1,chrom_length-bin_size, bin_size)
+    end <- start+(bin_size-1)
+    #last bin with last bit of chromosome length smaller then bin size
+    start[length(start)+1] <- start[length(start)]+bin_size
+    end[length(end)+1] <- chrom_length
+    
+    bins <- rbind(bins, data.frame(chr=paste("chr","X",sep=""), start=start, end=end))
+    
+    #Y chromosome
+    chrom_length <- chromInfo$position[chromInfo$chromosome == paste("chr","Y",sep="")]
+    
+    start <- seq(1,chrom_length-bin_size, bin_size)
+    end <- start+(bin_size-1)
+    
+    #last bin with last bit of chromosome length smaller then bin size
+    start[length(start)+1] <- start[length(start)]+bin_size
+    end[length(end)+1] <- chrom_length
+    bins <- rbind(bins, data.frame(chr=paste("chr","Y",sep=""), start=start, end=end))
+  }
   
   bins
 }
+
 
 #Segmentcalling function
 SegmentCalling <- function (copynumber_samples, tumor_segments,tumor_percentage) {
