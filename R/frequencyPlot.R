@@ -1,5 +1,5 @@
 setMethod("frequencyPlot", signature(x="cghRegions", y="missing"),
-          function (x, y, main='Frequency Plot', gaincol='blue', losscol='red', misscol=NA, build='GRCh36',... )
+          function (x, y, main='Frequency Plot', losscol = "#7272ff", gaincol = "#ff7272", misscol=NA, build='GRCh37',... )
           {
             chrom <- chromosomes(x)
             pos <- bpstart(x)
